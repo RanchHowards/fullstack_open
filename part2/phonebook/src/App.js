@@ -42,6 +42,15 @@ const App = () => {
     setSearchName(event.target.value)
 
   }
+
+  const removeEntry = (id) => {
+    if (window.confirm(`Do you really want to delete this?`)) {
+      phoneService.remove(id)
+      setPersons(persons.filter(person => person.id !== id))
+    }
+
+  }
+
   const hook = () => {
     phoneService.getAll()
       .then(initialPeople => setPersons(initialPeople))
@@ -64,7 +73,7 @@ const App = () => {
         addNewName={addNewName}
       />
       <h2>Numbers</h2>
-      <People searchName={searchName} persons={searchPersons} />
+      <People persons={searchPersons} removeEntry={removeEntry} />
     </div>
 
 
