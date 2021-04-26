@@ -4,14 +4,23 @@ import React, { useState, useEffect } from 'react'
 import Filter from './Components/Filter'
 import People from './Components/People'
 import PersonForm from './Components/Form'
+import Notification from './Components/Notification'
 
 import phoneService from './Services/phonebook'
+
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchName, setSearchName] = useState('')
+  const [notification, setNotificationMessage] = useState(null)
+
+  const setNotifyWith = (message, type = 'success') => {
+    setNotificationMessage({ message, type })
+    setTimeout(() => setNotificationMessage(null), 4000)
+  }
+
 
   const addName = (event) => {
     event.preventDefault()
@@ -20,18 +29,31 @@ const App = () => {
       if (window.confirm(`Do you want to update ${foundEntry.name}'s number?`)) {
         const updatedEntry = { ...foundEntry, number: newNumber }
         phoneService.change(updatedEntry)
-          .then(setPersons(persons.map(person => person.id !== updatedEntry.id ? person : updatedEntry)))
-        setNewName("")
-        setNewNumber("")
+          .then(
+            updatedPerson => {
+              setPersons(persons.map(person => person.id !== updatedEntry.id ? person : updatedPerson))
+              setNotifyWith(`Changed ${updatedPerson.name}`)
+              setNewName("")
+              setNewNumber("")
+            })
+          .catch(error => {
+            setNotifyWith(`${updatedEntry.name} has already been removed`, 'error')
+            setPersons(persons.filter(person => person.id !== foundEntry.id))
+          })
+
       }
     }
 
     else {
       const newEntry = { name: newName, number: newNumber }
       phoneService.add(newEntry)
-        .then(newEntry => setPersons(persons.concat(newEntry)))
-      setNewName("")
-      setNewNumber("")
+        .then(newEntry => {
+          setPersons(persons.concat(newEntry))
+          setNotifyWith(`Added ${newEntry.name} to the phonebook`)
+          setNewName("")
+          setNewNumber("")
+        })
+
     }
   }
   const addNewName = (event) => {
@@ -70,7 +92,7 @@ const App = () => {
       {/* <div>debug: {searchPersons}</div> */}
       <h2>Phonebook</h2>
       <Filter changeSearchName={changeSearchName} />
-
+      <Notification notification={notification} />
       <h2>add a new</h2>
       <PersonForm
         newName={newName}

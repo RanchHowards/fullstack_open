@@ -13,6 +13,7 @@ const add = (newEntry) => {
 const change = (updatedEntry) => {
     const request = axios.put(`http://localhost:3001/persons/${updatedEntry.id}`, updatedEntry)
     return request.then(response => response.data)
+
 }
 const remove = (id) => {
     console.log(id)
