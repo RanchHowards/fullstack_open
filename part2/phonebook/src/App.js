@@ -37,7 +37,7 @@ const App = () => {
               setNewNumber("")
             })
           .catch(error => {
-            setNotifyWith(`${updatedEntry.name} has already been removed`, 'error')
+            setNotifyWith(error.response.data, 'error')
             setPersons(persons.filter(person => person.id !== foundEntry.id))
           })
 
@@ -52,6 +52,10 @@ const App = () => {
           setNotifyWith(`Added ${newEntry.name} to the phonebook`)
           setNewName("")
           setNewNumber("")
+        })
+        .catch(err => {
+          console.log(err.response.data)
+          setNotifyWith(err.response.data, 'error')
         })
 
     }
