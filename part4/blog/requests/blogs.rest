@@ -5,3 +5,11 @@ Content-Type: application/json
     "author": "bob",
     "url": "sex.com",
     "likes": 7777}
+###
+PUT http://localhost:3001/api/blogs/6095415dd369fecb44c21a91
+Content-Type: application/json
+
+ {"title": "weener",
+    "author": "bob",
+    "url": "sex.com",
+    "likes": 3333}
