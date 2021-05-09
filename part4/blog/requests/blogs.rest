@@ -13,3 +13,11 @@ Content-Type: application/json
     "author": "bob",
     "url": "sex.com",
     "likes": 3333}
+
+###    
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+ {"name": "roc2",
+ "username": "china Blew",
+ "password": "ll"}
