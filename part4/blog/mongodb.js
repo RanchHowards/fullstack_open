@@ -1,5 +1,5 @@
-const Blog = require('../models/blog')
-const User = require('../models/user')
+const Blog = require('./models/blog')
+const User = require('./models/user')
 
 const blogs = [
     {
@@ -72,15 +72,49 @@ users = [{
     password: 'pass12234'
 }]
 
-const blogsInDb = async () => {
-    const blogs = await Blog.find({})
-    return blogs.map(blog => blog.toJSON())
+const seedUsers = async () => {
+
+    await User.deleteMany({})
+
+    for (let user of users) {
+        const userObj = new User(user)
+        await userObj.save()
+    }
+
+    console.log("USERS seeded")
+
 }
 
-const usersInDb = async () => {
-    const users = await User.find({})
+const seedBlogs = async () => {
+    let users = await getUsers()
+    // console.log(users)
 
-    return users.map(user => user.toJSON())
+    await Blog.deleteMany({})
+
+
+    let num = 0
+
+    for await (let blog of blogs) {
+        const blogObj = new Blog(blog)
+        blogObj.user = users[num]._id
+        await blogObj.save()
+
+        users[num].blogs.push(blogObj._id)
+        await users[num].save()
+        num < users.length - 1 ? num++ : num = users.length - 1
+    }
+    console.log("BLOGS seeded")
+
+
+}
+const getUsers = async () => {
+    const userList = await User.find({})
+    return userList
 }
 
-module.exports = { blogs, blogsInDb, usersInDb, users }
+const seed = async () => {
+    await seedUsers()
+
+    await seedBlogs()
+}
+module.exports = { blogs, seed }
