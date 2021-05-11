@@ -25,7 +25,7 @@ app.use(middleware.tokenExtractor)
 
 // seed.seed()
 
-app.use('/api/blogs', blogRouter)
+app.use('/api/blogs', middleware.userExtractor, blogRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
