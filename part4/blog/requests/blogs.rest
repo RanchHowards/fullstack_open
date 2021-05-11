@@ -1,9 +1,14 @@
+GET http://localhost:3001/api/users
+Content-Type: application/json
+
+###
+
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoaW5hQmxldyIsImlkIjoiNjA5YTMwMWMxZmUwZDVmZTg2ZjA2ODAxIiwiaWF0IjoxNjIwNzIyNDQwfQ.vxK0SQwmrsBvTAr1BPKxS4qnXPnartLIG4k_z2VP6m0
+Authorization: bearer eyJhbiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNoaW5hQmxldyIsImlkIjoiNjA5YTMwMWMxZmUwZDVmZTg2ZjA2ODAxIiwiaWF0IjoxNjIwNzI0NjM4fQ.PJyQsU9BmILUGHuy2hIyB4OQzNHw1zlR3_MrQphV6aM
 
  {
-    "title": "BOOOOOOBS",
+    "title": "SANDWICHHHHHH",
     "author": "bob",
     "url": "sex.com",
     "likes": 7777}
