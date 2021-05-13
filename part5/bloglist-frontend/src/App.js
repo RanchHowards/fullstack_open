@@ -11,9 +11,6 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
-  const [author, setAuthor] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
   const [visible, setVisible] = useState(true)
@@ -56,17 +53,13 @@ const App = () => {
     window.localStorage.clear()
   }
 
-  const postBlog = async event => {
-    event.preventDefault()
-    const newBlog = { title, author, url }
+  const postBlog = async (newBlog) => {
+
     try {
       const result = await blogService.postBlog(newBlog)
       setNotify(`a new blog ${newBlog.title} added by ${user.username}`)
       setBlogs(blogs.concat(result))
       setVisible(true)
-      setTitle('')
-      setUrl('')
-      setAuthor("")
     }
     catch (err) { setNotify(err.response.data.error, "error") }
   }
@@ -106,12 +99,6 @@ const App = () => {
         toggleVisibility={toggleVisibility}>
         <BlogForm
           postBlog={postBlog}
-          title={title}
-          author={author}
-          url={url}
-          handleTitle={({ target }) => setTitle(target.value)}
-          handleAuthor={({ target }) => setAuthor(target.value)}
-          handleUrl={({ target }) => setUrl(target.value)}
         />
       </Toggeler>
       {blogs.map(blog => <Blog
