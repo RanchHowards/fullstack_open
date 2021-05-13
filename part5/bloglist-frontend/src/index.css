@@ -1,0 +1,14 @@
+.error {  
+    color: red;
+    background: lightgrey;
+    border-style: solid;
+    border-color: red;
+    border-size: 5px;
+    font-size: 24px
+  }
+  .success {
+    color: green;
+    background: lightgrey;
+    border: green 5px solid;
+    font-size: 24px;
+  }
