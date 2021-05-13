@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
+import Toggeler from './components/Toggeler'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -12,6 +16,8 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
+  const [visible, setVisible] = useState(true)
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -43,28 +49,7 @@ const App = () => {
     }
   }
 
-  const loginForm = () => (
-    <div>
-      <h1>log in to the app</h1>
-      <form onSubmit={handleLogin}>
-        <div>username
-           <input
-            type="text"
-            name="username"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)} />
-        </div>
-        <div>password
-            <input
-            value={password}
-            name="password"
-            type="password"
-            onChange={({ target }) => setPassword(target.value)} />
-        </div>
-        <button type="submit">log in</button>
-      </form>
-    </div>
-  )
+
 
   const logout = (event) => {
     setUser(null)
@@ -78,6 +63,7 @@ const App = () => {
       const result = await blogService.postBlog(newBlog)
       setNotify(`a new blog ${newBlog.title} added by ${user.username}`)
       setBlogs(blogs.concat(result))
+      setVisible(true)
       setTitle('')
       setUrl('')
       setAuthor("")
@@ -85,51 +71,27 @@ const App = () => {
     catch (err) { setNotify(err.response.data.error, "error") }
   }
 
-  const blogForm = () => (
-    <div>
-      <h2>create new</h2>
-      <form onSubmit={postBlog}>
-        <div>title<input
-          value={title}
-          name="title"
-          type="text"
-          onChange={({ target }) => setTitle(target.value)}
-        />
-        </div>
-        <div>author<input
-          value={author}
-          name="author"
-          type="text"
-          onChange={({ target }) => setAuthor(target.value)}
-        />
-        </div>
-        <div>url<input
-          value={url}
-          name="url"
-          type="url"
-          onChange={({ target }) => setUrl(target.value)}
-        />
-        </div>
-        <button>create</button>
-      </form>
-    </div>
-  )
-
   const setNotify = (message, type = 'success') => {
     setNotification({ message, type })
     setTimeout(() => setNotification(null), 5000)
   }
-  const Notification = ({ notification }) => {
-    if (notification === null) {
-      return null
-    }
-    else return (<p className={notification.type}>{notification.message}</p>)
+
+  const toggleVisibility = () => {
+    setVisible(!visible)
   }
+
   if (user === null) {
     return (
       <div>
         <Notification notification={notification} />
-        { loginForm()}
+        <LoginForm
+          password={password}
+          username={username}
+          handleLogin={handleLogin}
+          handleUsername={({ target }) => setUsername(target.value)}
+          handlePassword={({ target }) => setPassword(target.value)}
+
+        />
       </div >)
   }
   return (
@@ -139,9 +101,23 @@ const App = () => {
       <Notification notification={notification} />
       <p><strong>{user.name}</strong> is logged in <button onClick={logout}>log out</button></p>
 
-      {blogForm()}
-
-      {blogs.map(blog => <Blog key={blog.id} blog={blog} />
+      <Toggeler buttonName="add Blog"
+        visible={visible}
+        toggleVisibility={toggleVisibility}>
+        <BlogForm
+          postBlog={postBlog}
+          title={title}
+          author={author}
+          url={url}
+          handleTitle={({ target }) => setTitle(target.value)}
+          handleAuthor={({ target }) => setAuthor(target.value)}
+          handleUrl={({ target }) => setUrl(target.value)}
+        />
+      </Toggeler>
+      {blogs.map(blog => <Blog
+        key={blog.id}
+        blog={blog}
+      />
       )}
     </div >
 
