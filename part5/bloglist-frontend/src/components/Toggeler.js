@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 const Toggeler = (props) => {
     const showWhenVisible = { display: props.visible ? '' : 'none' }

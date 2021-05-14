@@ -54,7 +54,6 @@ const App = () => {
   }
 
   const postBlog = async (newBlog) => {
-
     try {
       const result = await blogService.postBlog(newBlog)
       setNotify(`a new blog ${newBlog.title} added by ${user.username}`)
@@ -62,6 +61,15 @@ const App = () => {
       setVisible(true)
     }
     catch (err) { setNotify(err.response.data.error, "error") }
+  }
+
+  const updateBlog = async (updatedBlog) => {
+    try {
+      const result = await blogService.updateBlog(updatedBlog)
+      const newArr = blogs.map(blog => blog.id !== result.id ? blog : result)
+      setBlogs(newArr)
+    }
+    catch (err) { setNotify(err.message, "error") }
   }
 
   const setNotify = (message, type = 'success') => {
@@ -72,6 +80,18 @@ const App = () => {
   const toggleVisibility = () => {
     setVisible(!visible)
   }
+
+  const deleteBlog = async (blogId) => {
+    try {
+      const result = await blogService.deleteBlog(blogId)
+      const updatedBlogs = blogs.filter(blog => blog.id !== blogId)
+      setBlogs(updatedBlogs)
+    }
+    catch (err) { setNotify(err.message, 'error') }
+  }
+
+  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+
 
   if (user === null) {
     return (
@@ -101,9 +121,12 @@ const App = () => {
           postBlog={postBlog}
         />
       </Toggeler>
-      {blogs.map(blog => <Blog
+      {sortedBlogs.map(blog => <Blog
         key={blog.id}
         blog={blog}
+        updateBlog={updateBlog}
+        deleteBlog={deleteBlog}
+        loggedUser={user}
       />
       )}
     </div >
