@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
   const [visible, setVisible] = useState(false)
 
-  const showWhenVisible = { display: visible ? "none" : "", border: "1px solid black" }
-  const hideWhenVisible = { display: visible ? "" : "none", border: "3px dashed lime" }
+  const showWhenVisible = { display: visible ? 'none' : '', border: '1px solid black' }
+  const hideWhenVisible = { display: visible ? '' : 'none', border: '3px dashed lime' }
 
   const toggle = () => {
     setVisible(!visible)
@@ -22,14 +22,14 @@ const Blog = ({ blog, updateBlog, deleteBlog, loggedUser }) => {
 
   }
 
-  const isOwner = { display: blog.user.username === loggedUser.username ? "" : "none" }
+  const isOwner = { display: blog.user.username === loggedUser.username ? '' : 'none' }
 
 
-  return (<div>
-    <div style={showWhenVisible}>
+  return (<div >
+    <div style={showWhenVisible} className='blog'>
       {blog.title} {blog.author}<button onClick={toggle}>show</button>
     </div>
-    <div style={hideWhenVisible}>
+    <div style={hideWhenVisible} className='hiddenAtFirst'>
       {blog.title} {blog.author}<button onClick={toggle}>hide</button>
       <p>{blog.url}</p>
       <p>{blog.likes} <button onClick={addLike}>like</button></p>

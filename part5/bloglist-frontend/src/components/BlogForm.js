@@ -1,6 +1,7 @@
+/* eslint-disable indent */
 import React, { useState } from 'react'
 
-const BlogForm = ({ handleAuthor, handleTitle, handleUrl, postBlog }) => {
+const BlogForm = ({ postBlog }) => {
     const [title, setTitle] = useState('')
     const [url, setUrl] = useState('')
     const [author, setAuthor] = useState('')
@@ -14,7 +15,7 @@ const BlogForm = ({ handleAuthor, handleTitle, handleUrl, postBlog }) => {
 
         setTitle('')
         setUrl('')
-        setAuthor("")
+        setAuthor('')
     }
 
 
@@ -27,6 +28,7 @@ const BlogForm = ({ handleAuthor, handleTitle, handleUrl, postBlog }) => {
                 <div>title<input
                     value={title}
                     name="title"
+                    id="title"
                     type="text"
                     onChange={({ target }) => setTitle(target.value)}
                 />
@@ -34,6 +36,7 @@ const BlogForm = ({ handleAuthor, handleTitle, handleUrl, postBlog }) => {
                 <div>author<input
                     value={author}
                     name="author"
+                    id="author"
                     type="text"
                     onChange={({ target }) => setAuthor(target.value)}
                 />
@@ -41,11 +44,12 @@ const BlogForm = ({ handleAuthor, handleTitle, handleUrl, postBlog }) => {
                 <div>url<input
                     value={url}
                     name="url"
+                    id="url"
                     type="url"
                     onChange={({ target }) => setUrl(target.value)}
                 />
                 </div>
-                <button>create</button>
+                <button id='submitBlog'>create</button>
             </form>
         </div>
     )

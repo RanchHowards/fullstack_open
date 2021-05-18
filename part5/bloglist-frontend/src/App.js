@@ -36,19 +36,19 @@ const App = () => {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
       setUser(user)
-      setNotify(`successfully logged in ${user.username}`, "success")
+      setNotify(`successfully logged in ${user.username}`, 'success')
       setPassword('')
       setUsername('')
       blogService.setToken(user.token)
     }
     catch (error) {
-      setNotify(error.response.data.error, "error")
+      setNotify(error.response.data.error, 'error')
     }
   }
 
 
 
-  const logout = (event) => {
+  const logout = () => {
     setUser(null)
     window.localStorage.clear()
   }
@@ -60,7 +60,7 @@ const App = () => {
       setBlogs(blogs.concat(result))
       setVisible(true)
     }
-    catch (err) { setNotify(err.response.data.error, "error") }
+    catch (err) { setNotify(err.response.data.error, 'error') }
   }
 
   const updateBlog = async (updatedBlog) => {
@@ -69,7 +69,7 @@ const App = () => {
       const newArr = blogs.map(blog => blog.id !== result.id ? blog : result)
       setBlogs(newArr)
     }
-    catch (err) { setNotify(err.message, "error") }
+    catch (err) { setNotify(err.message, 'error') }
   }
 
   const setNotify = (message, type = 'success') => {
@@ -83,7 +83,7 @@ const App = () => {
 
   const deleteBlog = async (blogId) => {
     try {
-      const result = await blogService.deleteBlog(blogId)
+      await blogService.deleteBlog(blogId)
       const updatedBlogs = blogs.filter(blog => blog.id !== blogId)
       setBlogs(updatedBlogs)
     }
