@@ -39,7 +39,8 @@ blogRouter.post('/', async (request, response) => {
 
 blogRouter.put('/:id', async (req, res) => {
 
-    const update = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    const update = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('user', { user: 1, username: 1 })
+
     res.json(update.toJSON())
 
 })
@@ -58,9 +59,6 @@ blogRouter.delete('/:id', async (request, response) => {
         response.status(204).end()
     }
     else response.status(401).json({ error: 'not authorized' })
-
-
-
 })
 
 module.exports = blogRouter
