@@ -1,8 +1,16 @@
+export const notificationChange = (content, time) => {
+    return dispatch => {
 
-export const notificationChange = (content) => {
-    return {
-        type: "NOTIFICATION",
-        content,
+        dispatch({
+            type: "NOTIFICATION",
+            content,
+        }
+        )
+
+        const timeoutId = setTimeout(() => dispatch(notificationRemove()), time * 1000
+        )
+        dispatch(timeoutIdAction(timeoutId))
+
     }
 }
 
@@ -11,10 +19,18 @@ export const notificationRemove = () => {
         type: "REMOVE"
     }
 }
+const timeoutIdAction = (id) => {
+    return {
+        type: "TIMEOUTID",
+        id
+    }
+}
+
 
 const notificationReducer = (state = null, action) => {
     switch (action.type) {
-        case "NOTIFICATION": return action.content
+        case "NOTIFICATION": return { ...state, content: action.content }
+        case "TIMEOUTID": return { ...state, timeoutId: action.id }
         case "REMOVE": return null
         default: return state
     }
