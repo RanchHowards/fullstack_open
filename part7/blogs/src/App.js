@@ -3,39 +3,43 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import Users from './components/Users'
 import Toggeler from './components/Toggeler'
+import User from './components/User'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setNotify } from './reducers/notificationReducer'
+import { initializeState, addBlog } from './reducers/blogReducer'
+import { storeUser, removeUser } from './reducers/userReducer'
+import { Switch, Route, useRouteMatch } from 'react-router-dom'
 
 const App = () => {
   const dispatch = useDispatch()
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-  // const [notification, setNotification] = useState(null)
+  // const [user, setUser] = useState(null)
   const [visible, setVisible] = useState(true)
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    dispatch(initializeState())
   }, [])
 
   useEffect(() => {
     const storedUser = window.localStorage.getItem('loggedUser')
     if (storedUser) {
       const user = JSON.parse(storedUser)
-      setUser(user)
+      dispatch(storeUser(user))
       blogService.setToken(user.token)
     }
   }, [])
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
-      setUser(user)
+      dispatch(storeUser(user))
       dispatch(setNotify(`successfully logged in ${user.username}`, 'success'))
       setPassword('')
       setUsername('')
@@ -46,7 +50,7 @@ const App = () => {
   }
 
   const logout = () => {
-    setUser(null)
+    dispatch(removeUser())
     window.localStorage.clear()
   }
 
@@ -56,22 +60,10 @@ const App = () => {
       dispatch(
         setNotify(`a new blog ${newBlog.title} added by ${user.username}`)
       )
-      setBlogs(blogs.concat(result))
+      dispatch(addBlog(result))
       setVisible(true)
     } catch (err) {
       dispatch(setNotify(err.response.data.error, 'error'))
-    }
-  }
-
-  const updateBlog = async (updatedBlog) => {
-    try {
-      const result = await blogService.updateBlog(updatedBlog)
-      const newArr = blogs.map((blog) =>
-        blog.id !== result.id ? blog : result
-      )
-      setBlogs(newArr)
-    } catch (err) {
-      dispatch(setNotify(err.message, 'error'))
     }
   }
 
@@ -79,17 +71,17 @@ const App = () => {
     setVisible(!visible)
   }
 
-  const deleteBlog = async (blogId) => {
-    try {
-      await blogService.deleteBlog(blogId)
-      const updatedBlogs = blogs.filter((blog) => blog.id !== blogId)
-      setBlogs(updatedBlogs)
-    } catch (err) {
-      dispatch(setNotify(err.message, 'error'))
-    }
-  }
+  const sortedBlogs = useSelector((state) => state.blogs).sort(
+    (a, b) => b.likes - a.likes
+  )
 
-  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
+  const user = useSelector((state) => state.user)
+
+  const match = useRouteMatch('/users/:id')
+
+  const blogInfo = match
+    ? sortedBlogs.find((blog) => blog.user.id === match.params.id)
+    : null
 
   if (user === null) {
     return (
@@ -113,23 +105,26 @@ const App = () => {
         <strong>{user.name}</strong> is logged in{' '}
         <button onClick={logout}>log out</button>
       </p>
-
-      <Toggeler
-        buttonName="add Blog"
-        visible={visible}
-        toggleVisibility={toggleVisibility}
-      >
-        <BlogForm postBlog={postBlog} />
-      </Toggeler>
-      {sortedBlogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          updateBlog={updateBlog}
-          deleteBlog={deleteBlog}
-          loggedUser={user}
-        />
-      ))}
+      <Switch>
+        <Route path="/users/:id">
+          <User blog={blogInfo} />
+        </Route>
+        <Route path="/users">
+          <Users />
+        </Route>
+        <Route path="/">
+          <Toggeler
+            buttonName="add Blog"
+            visible={visible}
+            toggleVisibility={toggleVisibility}
+          >
+            <BlogForm postBlog={postBlog} />
+          </Toggeler>
+          {sortedBlogs.map((blog) => (
+            <Blog key={blog.id} blog={blog} loggedUser={user} />
+          ))}
+        </Route>
+      </Switch>
     </div>
   )
 }
