@@ -34,7 +34,7 @@ const User = () => {
           {objArr.map((user) => (
             <tr key={user[0]}>
               <td>
-                <Link to={`${user[2]}`}>{user[0]}</Link>
+                <Link to={`/users/${user[2]}`}>{user[0]}</Link>
               </td>
               <td>{user[1]}</td>
             </tr>

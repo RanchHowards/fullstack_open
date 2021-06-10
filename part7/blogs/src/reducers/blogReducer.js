@@ -20,7 +20,20 @@ export const updateBlog = (updatedBlog) => {
       const result = await blogService.updateBlog(updatedBlog)
       dispatch({ type: 'UPDATE_BLOG', data: result })
     } catch (err) {
-      dispatch(setNotify(err.message, 'error'))
+      dispatch(setNotify(err.message, 'danger'))
+    }
+  }
+}
+
+export const addBlogComment = (comment, id) => {
+  return async (dispatch) => {
+    try {
+      const commentObj = { content: comment }
+      const result = await blogService.postComment(commentObj, id)
+
+      dispatch({ type: 'ADD_COMMENT', data: result })
+    } catch (err) {
+      dispatch(setNotify(err.message, 'danger'))
     }
   }
 }
@@ -31,7 +44,7 @@ export const deleteBlog = (blogId) => {
       await blogService.deleteBlog(blogId)
       dispatch({ type: 'REMOVE_BLOG', blogId })
     } catch (err) {
-      dispatch(setNotify(err.message, 'error'))
+      dispatch(setNotify(err.message, 'danger'))
     }
   }
 }
@@ -51,6 +64,12 @@ const blogReducer = (state = [], action) => {
     case 'REMOVE_BLOG': {
       const updatedBlogs = state.filter((blog) => blog.id !== action.blogId)
       return (state = updatedBlogs)
+    }
+    case 'ADD_COMMENT': {
+      const updatedBlogs = state.map((blog) =>
+        blog.id !== action.data.id ? blog : action.data
+      )
+      return updatedBlogs
     }
     default:
       return state

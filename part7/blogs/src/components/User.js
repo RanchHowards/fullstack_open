@@ -1,4 +1,5 @@
 import React from 'react'
+import { Table } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 
@@ -14,11 +15,15 @@ const User = () => {
     <>
       <h1>{userBlogs[0].user.username}</h1>
       <h2>Added Blogs</h2>
-      <ul>
-        {userBlogs.map((blog) => (
-          <li key={blog.title}>{blog.title}</li>
-        ))}
-      </ul>
+      <Table striped>
+        <tbody>
+          {userBlogs.map((blog) => (
+            <tr key={blog.id}>
+              <td>{blog.title}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </>
   )
 }
