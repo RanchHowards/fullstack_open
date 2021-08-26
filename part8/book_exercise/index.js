@@ -14,7 +14,8 @@ const jwt = require('jsonwebtoken')
 const JWT_SECRET = 'NEED_HERE_A_SECRET_KEY'
 
 const MONGODB_URI =
-  'mongodb+srv://gram:11Database1@cluster0.rkkiu.mongodb.net/graphqlBooksExercise?retryWrites=true&w=majority'
+  // 'mongodb+srv://gram:11Database1@cluster0.rkkiu.mongodb.net/graphqlBooksExercise?retryWrites=true&w=majority'
+  'mongodb://gram:11Database1@cluster0-shard-00-00.rkkiu.mongodb.net:27017,cluster0-shard-00-01.rkkiu.mongodb.net:27017,cluster0-shard-00-02.rkkiu.mongodb.net:27017/graphqlBooksExercise?ssl=true&replicaSet=atlas-yax6gk-shard-0&authSource=admin&retryWrites=true&w=majority'
 
 console.log('connecting to', MONGODB_URI)
 
@@ -129,7 +130,11 @@ const resolvers = {
       }
       return book
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+      const currentUser = context.currentUser
+      if (!currentUser) {
+        throw new AuthenticationError('AUTH ERROR in editAuthor!!!')
+      }
       try {
         let foundAuthor = await Author.findOneAndUpdate(
           { name: args.author },
@@ -151,12 +156,11 @@ const resolvers = {
       }
     },
     login: async (root, args) => {
-      const user = User.find({ username: args.username })
+      const user = await User.findOne({ username: args.username })
 
-      if (!user && args.password !== 'secret') {
+      if (!user || args.password !== 'secret') {
         throw new UserInputError('wrong credentials assHat')
       }
-
       const userForToken = {
         username: user.username,
         id: user._id,
@@ -171,6 +175,7 @@ const server = new ApolloServer({
   resolvers,
   context: async ({ req }) => {
     const auth = req ? req.headers.authorization : null
+
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(auth.substring(7), JWT_SECRET)
       const currentUser = await User.findById(decodedToken.id)
