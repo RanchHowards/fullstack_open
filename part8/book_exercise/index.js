@@ -68,8 +68,8 @@ const typeDefs = gql`
     addBook(
       title: String!
       published: String!
-      author: String!
       genres: [String!]!
+      author: String!
     ): Book
     editAuthor(author: String!, setBornTo: String!): Author
     createUser(username: String!, favoriteGenre: String!): User
@@ -111,6 +111,7 @@ const resolvers = {
       }
       let foundAuthor = await Author.findOne({ name: args.author })
       const book = new Book({ ...args })
+
       if (!foundAuthor) {
         const author = new Author({ name: args.author })
         try {
