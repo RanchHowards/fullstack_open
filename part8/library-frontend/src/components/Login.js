@@ -6,7 +6,6 @@ const Login = (props) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  //STOPPED around HERE
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
       console.log('FROM LOGIN MUTATtion!', error.graphQLErrors[0].message)

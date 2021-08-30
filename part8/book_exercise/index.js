@@ -93,7 +93,9 @@ const resolvers = {
       )
     },
     allAuthors: () => Author.find({}),
-    me: (root, args, context) => context.currentUser,
+    me: (root, args, context) => {
+      return context.currentUser
+    },
   },
 
   Author: {
@@ -166,7 +168,9 @@ const resolvers = {
         username: user.username,
         id: user._id,
       }
-      return { value: jwt.sign(userForToken, JWT_SECRET) }
+      return {
+        value: jwt.sign(userForToken, JWT_SECRET),
+      }
     },
   },
 }
